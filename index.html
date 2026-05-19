@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO Keyword Generator (Thailand)</title>
+    <title>Google Suggest Keyword Tool (Free)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Prompt', sans-serif;
         }
-        /* Custom scrollbar for textareas */
         textarea::-webkit-scrollbar {
             width: 8px;
         }
@@ -26,7 +25,7 @@
             background: #94a3b8; 
         }
         .loader {
-            border-top-color: #3b82f6;
+            border-top-color: #10b981; /* Emerald 500 */
             -webkit-animation: spinner 1.5s linear infinite;
             animation: spinner 1.5s linear infinite;
         }
@@ -36,18 +35,25 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 selection:bg-blue-200">
+<body class="bg-slate-50 min-h-screen text-slate-800 selection:bg-emerald-200">
 
-    <div class="max-w-4xl mx-auto pt-10 pb-20 px-4 sm:px-6">
+    <div class="max-w-5xl mx-auto pt-10 pb-20 px-4 sm:px-6">
         
         <!-- Header -->
         <div class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                เครื่องมือสร้างคีย์เวิร์ด SEO อัจฉริยะ
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold mb-4">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Free Tool (No API Key Required)
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600">
+                เครื่องมือดึงคีย์เวิร์ด Google Suggest
             </h1>
             <p class="text-slate-500 text-sm md:text-base max-w-2xl mx-auto">
-                ค้นหาไอเดียคีย์เวิร์ดที่ใช่ อ้างอิงจาก Google.co.th, Search Intent และ Google Trends <br class="hidden sm:block">
-                วิเคราะห์บริบทภาษาไทย แนะนำ 10 คีย์เวิร์ดเด็ด พร้อมนำไปใช้งานทันที
+                ดึงคำค้นหายอดฮิต (Autocomplete) จากระบบของ Google.co.th โดยตรง <br class="hidden sm:block">
+                เป็นคำที่คนไทยกำลังค้นหาจริงๆ ใช้งานได้ทันทีไม่ต้องตั้งค่าใดๆ
             </p>
         </div>
 
@@ -59,121 +65,112 @@
                 <label for="keywordInput" class="block text-sm font-semibold text-slate-700 mb-2">คำค้นหาหลัก (Seed Keyword)</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <input type="text" id="keywordInput" placeholder="เช่น คาเฟ่เชียงใหม่, รองเท้าวิ่ง, วิธีลดน้ำหนัก..." 
-                        class="flex-1 w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-700 placeholder-slate-400">
-                    <button id="generateBtn" onclick="generateKeywords()" 
-                        class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 whitespace-nowrap">
+                        class="flex-1 w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-slate-700 placeholder-slate-400">
+                    <button id="generateBtn" onclick="fetchSuggestKeywords()" 
+                        class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 whitespace-nowrap">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                         </svg>
-                        สร้างคีย์เวิร์ด
+                        ดึงคีย์เวิร์ด
                     </button>
                 </div>
-                <p id="errorMessage" class="text-red-500 text-sm mt-2 hidden"></p>
+                <div id="errorMessage" class="text-red-500 text-sm mt-3 hidden bg-red-50 p-3 rounded-lg border border-red-100 leading-relaxed"></div>
             </div>
 
             <!-- Loading State -->
             <div id="loadingState" class="hidden flex-col items-center justify-center py-12">
                 <div class="loader border-4 border-slate-100 rounded-full w-12 h-12 mb-4"></div>
-                <p class="text-slate-500 font-medium animate-pulse">กำลังวิเคราะห์ข้อมูลจาก Google...</p>
+                <p class="text-slate-500 font-medium animate-pulse">กำลังดึงข้อมูลจาก Google Suggest...</p>
             </div>
 
             <!-- Results Section -->
             <div id="resultsSection" class="hidden space-y-6 animate-[fadeIn_0.5s_ease-out]">
                 
                 <hr class="border-slate-100">
+                
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800">ผลลัพธ์ที่พบ: <span id="resultCount" class="text-emerald-600">0</span> คำ</h2>
+                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <!-- Format 1: Comma Separated -->
-                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                    <!-- Format 1: List -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 lg:col-span-1">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-semibold text-slate-700 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
                                 </svg>
-                                แบบคั่นด้วยลูกน้ำ
+                                แบบรายการ
                             </h3>
-                            <button onclick="copyText('resultComma')" class="text-xs px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                                </svg>
+                            <button onclick="copyText('resultList')" class="text-xs px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors flex items-center gap-1">
                                 คัดลอก
                             </button>
                         </div>
-                        <textarea id="resultComma" readonly class="w-full h-32 bg-transparent text-slate-600 resize-none outline-none leading-relaxed" placeholder="ผลลัพธ์จะแสดงที่นี่..."></textarea>
+                        <textarea id="resultList" readonly class="w-full h-48 bg-transparent text-slate-600 resize-none outline-none leading-relaxed" placeholder="ผลลัพธ์จะแสดงที่นี่..."></textarea>
                     </div>
 
-                    <!-- Format 2: Hashtags -->
-                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                    <!-- Format 2: Comma Separated -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 lg:col-span-1">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-semibold text-slate-700 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                                แบบลูกน้ำคั่น
+                            </h3>
+                            <button onclick="copyText('resultComma')" class="text-xs px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors flex items-center gap-1">
+                                คัดลอก
+                            </button>
+                        </div>
+                        <textarea id="resultComma" readonly class="w-full h-48 bg-transparent text-slate-600 resize-none outline-none leading-relaxed" placeholder="ผลลัพธ์จะแสดงที่นี่..."></textarea>
+                    </div>
+
+                    <!-- Format 3: Hashtags -->
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 lg:col-span-1">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-semibold text-slate-700 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-500" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9.243 3.03a1 1 0 01.727 1.213L9.53 6h2.94l.56-2.243a1 1 0 111.94.486L14.53 6H17a1 1 0 110 2h-2.97l-1 4H15a1 1 0 110 2h-2.47l-.56 2.242a1 1 0 11-1.94-.485L10.47 14H7.53l-.56 2.242a1 1 0 11-1.94-.485L5.47 14H3a1 1 0 110-2h2.97l1-4H5a1 1 0 110-2h2.47l.56-2.243a1 1 0 011.213-.727zM9.03 8l-1 4h2.938l1-4H9.031z" clip-rule="evenodd" />
                                 </svg>
                                 แบบแฮชแท็ก
                             </h3>
                             <button onclick="copyText('resultHashtag')" class="text-xs px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                                </svg>
                                 คัดลอก
                             </button>
                         </div>
-                        <textarea id="resultHashtag" readonly class="w-full h-32 bg-transparent text-slate-600 resize-none outline-none leading-relaxed" placeholder="ผลลัพธ์จะแสดงที่นี่..."></textarea>
+                        <textarea id="resultHashtag" readonly class="w-full h-48 bg-transparent text-slate-600 resize-none outline-none leading-relaxed" placeholder="ผลลัพธ์จะแสดงที่นี่..."></textarea>
                     </div>
 
                 </div>
             </div>
 
+            <!-- Footer / Disclaimer -->
+            <p class="text-xs text-slate-400 mt-8 text-center">
+                * ข้อมูลคีย์เวิร์ดดึงมาจาก Google Autocomplete API โดยตรง <br>
+                ระบบทำงานฝั่ง Frontend 100% โดยใช้ Public CORS Proxy ในการดึงข้อมูล
+            </p>
+
         </div>
     </div>
 
-    <!-- Toast Notification (Hidden by default) -->
-    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg shadow-green-500/30 flex items-center gap-3 z-50 pointer-events-none">
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg shadow-emerald-500/30 flex items-center gap-3 z-50 pointer-events-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
-        <span class="font-medium">คัดลอกเรียบร้อยแล้ว!</span>
+        <span id="toastMessage" class="font-medium">คัดลอกเรียบร้อยแล้ว!</span>
     </div>
 
     <script>
-        // API Key is automatically provided by the environment
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-        // Add event listener for Enter key in input field
+        // Trigger button click on Enter key
         document.getElementById('keywordInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                generateKeywords();
+                fetchSuggestKeywords();
             }
         });
 
-        async function fetchWithRetry(url, payload, maxRetries = 5) {
-            const delays = [1000, 2000, 4000, 8000, 16000];
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return await response.json();
-                } catch (e) {
-                    if (i === maxRetries - 1) throw e;
-                    await new Promise(res => setTimeout(res, delays[i]));
-                }
-            }
-        }
-
-        async function generateKeywords() {
+        async function fetchSuggestKeywords() {
             const inputEl = document.getElementById('keywordInput');
             const keyword = inputEl.value.trim();
             const errorEl = document.getElementById('errorMessage');
@@ -186,7 +183,7 @@
             resultsEl.classList.add('hidden');
             
             if (!keyword) {
-                errorEl.textContent = 'กรุณาพิมพ์คำค้นหาหลัก (Seed Keyword) ก่อนคลิกสร้าง';
+                errorEl.textContent = 'กรุณาพิมพ์คำค้นหาหลัก (Seed Keyword) ก่อนคลิกปุ่ม';
                 errorEl.classList.remove('hidden');
                 inputEl.focus();
                 return;
@@ -198,49 +195,44 @@
             btnEl.disabled = true;
             btnEl.classList.add('opacity-70', 'cursor-not-allowed');
 
-            // Construct Prompt for Gemini
-            const systemPrompt = `คุณคือผู้เชี่ยวชาญด้าน SEO ในประเทศไทย หน้าที่ของคุณคือสร้างคีย์เวิร์ด (Keywords) ที่เกี่ยวข้องกับคำค้นหาที่ผู้ใช้ระบุ โดยต้องเป็นคีย์เวิร์ดที่มีแนวโน้มการค้นหาจริงใน Google.co.th, ตรงกับ Search Intent ของคนไทย และอ้างอิงจากลักษณะคำค้นหาใน Google Trends 
-            ข้อบังคับ:
-            1. ให้แนะนำมาทั้งหมด 10 คีย์เวิร์ด
-            2. ห้ามมีคำอธิบายเพิ่มเติมใดๆ
-            3. ต้องตอบกลับในรูปแบบ JSON Array ของ String เท่านั้น`;
-
-            const userPrompt = `จงสร้าง 10 คีย์เวิร์ดที่เกี่ยวข้องกับคำว่า "${keyword}"`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "ARRAY",
-                        items: { type: "STRING" }
-                    }
-                }
-            };
+            // Google Suggest URL for Thailand (hl=th, gl=th) using chrome client for JSON format
+            const googleSuggestUrl = `https://suggestqueries.google.com/complete/search?client=chrome&hl=th&gl=th&q=${encodeURIComponent(keyword)}`;
+            
+            // We use AllOrigins public CORS proxy because modern browsers block direct calls to Google from github.io
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(googleSuggestUrl)}`;
 
             try {
-                const result = await fetchWithRetry(apiUrl, payload);
+                const response = await fetch(proxyUrl);
                 
-                // Parse the response
-                let keywords = [];
-                const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                
-                if (responseText) {
-                    keywords = JSON.parse(responseText);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
 
-                if (!Array.isArray(keywords) || keywords.length === 0) {
-                    throw new Error("รูปแบบข้อมูลที่ได้รับไม่ถูกต้อง");
+                // The Chrome client returns an array: ["keyword", ["suggestion1", "suggestion2", ...], ...]
+                const data = await response.json();
+                const keywords = data[1] || []; // Extract the array of suggestions
+
+                if (keywords.length === 0) {
+                    throw new Error("ไม่พบคำแนะนำจาก Google สำหรับคีย์เวิร์ดนี้");
                 }
 
-                // Format 1: Comma separated
+                // Add the original keyword at the top if it's not in the list
+                if (!keywords.includes(keyword)) {
+                    keywords.unshift(keyword);
+                }
+
+                // Format 1: List format (1 per line)
+                const listFormat = keywords.join('\n');
+
+                // Format 2: Comma separated
                 const commaFormat = keywords.join(', ');
                 
-                // Format 2: Hashtag separated (Remove spaces for valid hashtags)
+                // Format 3: Hashtag separated (Remove spaces)
                 const hashtagFormat = keywords.map(kw => '#' + kw.replace(/\s+/g, '')).join(', ');
 
-                // Update UI
+                // Update UI elements
+                document.getElementById('resultCount').textContent = keywords.length;
+                document.getElementById('resultList').value = listFormat;
                 document.getElementById('resultComma').value = commaFormat;
                 document.getElementById('resultHashtag').value = hashtagFormat;
 
@@ -250,10 +242,12 @@
                 resultsEl.classList.remove('hidden');
 
             } catch (error) {
-                console.error("API Error:", error);
+                console.error("Fetch Error:", error);
                 loadingEl.classList.add('hidden');
                 loadingEl.classList.remove('flex');
-                errorEl.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง';
+                
+                errorEl.innerHTML = `<strong>ไม่สามารถดึงข้อมูลได้:</strong> <br>
+                ${error.message === 'ไม่พบคำแนะนำจาก Google สำหรับคีย์เวิร์ดนี้' ? error.message : 'เกิดปัญหาเชื่อมต่อกับเซิร์ฟเวอร์ proxy กรุณาลองใหม่อีกครั้งในอีกสักครู่'}`;
                 errorEl.classList.remove('hidden');
             } finally {
                 btnEl.disabled = false;
@@ -267,10 +261,9 @@
 
             if (!textToCopy) return;
 
-            // Use the fallback approach which is safer in cross-origin iframes
+            // Fallback approach which is safer in cross-origin environments and older browsers
             const tempTextArea = document.createElement("textarea");
             tempTextArea.value = textToCopy;
-            // Prevent scrolling to bottom
             tempTextArea.style.top = "0";
             tempTextArea.style.left = "0";
             tempTextArea.style.position = "fixed";
@@ -281,12 +274,11 @@
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
+                    document.getElementById('toastMessage').textContent = 'คัดลอกเรียบร้อยแล้ว!';
                     showToast();
-                } else {
-                    console.error('Fallback copy failed');
                 }
             } catch (err) {
-                console.error('Fallback: Oops, unable to copy', err);
+                console.error('Oops, unable to copy', err);
             }
 
             document.body.removeChild(tempTextArea);
@@ -296,10 +288,10 @@
             const toast = document.getElementById('toast');
             toast.classList.remove('translate-y-20', 'opacity-0');
             
-            // Hide after 3 seconds
+            // Hide after 2.5 seconds
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            }, 2500);
         }
     </script>
 </body>
