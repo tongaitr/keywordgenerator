@@ -230,7 +230,7 @@
                 } else {
                     // Process results
                     const commaFormat = suggestions.join(', ');
-                    const hashtagFormat = suggestions.map(kw => '#' + kw.replace(/\s+/g, '')).join(', ');
+                    const hashtagFormat = suggestions.map(kw => '#' + kw.replace(/\s+/g, '')).join(' ');
 
                     document.getElementById('resultComma').value = commaFormat;
                     document.getElementById('resultHashtag').value = hashtagFormat;
